@@ -320,10 +320,11 @@ var update = function() {
 						samwise.x=-50;
 						samwise.y=-50;
 						wisedeath=false;
-						var comment='Samwise Gamgee has died! Poor Frodo!'
+						var comment='<b>Samwise Gamgee has died! Poor Frodo!</b>'
 						document.getElementById('announcement').innerHTML = comment;
+						document.getElementById('samwellimg').src='images/samwelldead.png';
 						if(!wisedeath&&!welldeath){
-							var comment='Game over! Our lovable Sams have perished.'
+							var comment='<b>Game over! Our lovable Sams have perished.</b>'
 							document.getElementById('announcement').innerHTML = comment;
 						}
 					}
@@ -336,10 +337,11 @@ var update = function() {
 						samwell.x=-50;
 						samwell.y=-50;
 						welldeath=false;
-						var comment='Samwell Tarly has died! He has joined Jon Snow!'
+						var comment='<b>Samwell Tarly has died! He has joined Jon Snow!</b>'
 						document.getElementById('announcement').innerHTML = comment;
+						document.getElementById('samwiseimg').src='images/samwisedead.png';
 						if(!wisedeath&&!welldeath){
-							var comment='Game over! Our lovable Sams have perished.'
+							var comment='<b>Game over! Our lovable Sams have perished.</b>'
 							document.getElementById('announcement').innerHTML = comment;
 						}
 					}
