@@ -22,7 +22,7 @@ var animate = window.requestAnimationFrame ||
  //init
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
-var offsetTop = canvas.offsetTop+200;
+var offsetTop = canvas.offsetTop+130;
 var offsetLeft = canvas.offsetLeft;
 var nextEnemy= 100;
 var randnum=(Math.random() * 5 ) +5;
@@ -269,7 +269,7 @@ var Collides=function(a,b){
 };
 
 // listen for clicks
-canvas.addEventListener('click', function(e) {
+canvas.addEventListener('mousedown', function(e) {
     e.preventDefault();
 	Input.set(e);
 }, false);
