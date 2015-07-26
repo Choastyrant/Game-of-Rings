@@ -142,3 +142,11 @@ body {
 	opacity: 0.5;
 	padding:5px;
 }
+
+img{
+    -khtml-user-select: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
