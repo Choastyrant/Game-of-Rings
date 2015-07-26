@@ -166,8 +166,8 @@ Enemy=function(type,health){
     this.y = Math.random() * 470+20;
 	this.xdir=Math.random()*4-2;
 	this.ydir=Math.random()*4-2;
-	while(((this.x-samwise.x)*(this.x-samwise.x)+(this.y-samwise.y)*(this.y-samwise.y)<150)
-	||((this.x-samwell.x)*(this.x-samwell.x)+(this.y-samwell.y)*(this.y-samwell.y)<150)){
+	while(((this.x-samwise.x)*(this.x-samwise.x)+(this.y-samwise.y)*(this.y-samwise.y)<200)
+	||((this.x-samwell.x)*(this.x-samwell.x)+(this.y-samwell.y)*(this.y-samwell.y)<200)){
 		this.x = Math.random() * 630+20;
 		this.y = Math.random() * 470+20;
 	}
