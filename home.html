@@ -1,0 +1,108 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, 
+    user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<link rel="stylesheet" type="text/css" href="style.css">
+
+<title>Game of Rings</title>
+
+</head>
+
+<body>
+
+<div id='banner'>
+	<center><img src="images/gameofrings.png"> </center>
+</div>
+<div id='middle'>
+	<div class='content'>
+		<div class="contentbox">
+			<div class='image'>
+				<img src="images/samwell.png">
+			</div>
+		</div>
+		<div class="contentbox">
+			<div id='quiz'>
+				<!--<div id='quizstart'>
+					<br><h2>Are you a SAMWELL or a SAMWISE?</h1><img src="images/goticon.png">
+					<img src="images/lotricon.png"><br><h3>Fight the battle</h3>
+					
+					<div id='starting'>
+					</div>-->
+					<canvas id="canvas" width="700" height="500">
+						Your browser dosen't support the HTML5 canvas.
+						<div style="display:none;">
+						  <img id="map" src="images/lotrmap.jpg" width="728" height="506">
+						  <img id="samwiseicon" src="images/lotricon2.png" width="50" height="50" style="z-index=-5;">
+						  <img id="samwellicon" src="images/goticon.png" width="50" height="50" style="z-index=-5;">
+						  <img id="samwiseicondead" src="images/lotriconred2.png" width="50" height="80" style="z-index=-5;">
+						  <img id="samwellicondead" src="images/goticonred.png" width="50" height="80" style="z-index=-5;">
+						  
+						  <img id="orc1" src="images/enemy/orc1.png" width="50" height="50" style="z-index=5;">
+						  <img id="orc2" src="images/enemy/orc2.png" width="50" height="50" style="z-index=5;">
+						  <img id="ringwraith1" src="images/enemy/ringwraith1.png" width="50" height="50" style="z-index=5;">
+						  <img id="ringwraith2" src="images/enemy/ringwraith2.png" width="50" height="50" style="z-index=5;">
+						  <img id="ringwraith3" src="images/enemy/ringwraith3.png" width="50" height="50" style="z-index=5;">
+						  <img id="ringwraith4" src="images/enemy/ringwraith4.png" width="50" height="50" style="z-index=5;">
+						  <img id="gollum1" src="images/enemy/gollum1.png" width="50" height="50" style="z-index=5;">
+						  <img id="gollum2" src="images/enemy/gollum2.png" width="50" height="50" style="z-index=5;">
+						  <img id="gollum3" src="images/enemy/gollum3.png" width="50" height="50" style="z-index=5;">
+						  <img id="gollum4" src="images/enemy/gollum4.png" width="50" height="50" style="z-index=5;">
+						  <img id="gollum5" src="images/enemy/gollum5.png" width="50" height="50" style="z-index=5;">
+						  <img id="wildling1" src="images/enemy/wildling1.png" width="50" height="50" style="z-index=5;">
+						  <img id="wildling2" src="images/enemy/wildling2.png" width="50" height="50" style="z-index=5;">
+						  <img id="mance1" src="images/enemy/mance1.png" width="50" height="50" style="z-index=5;">
+						  <img id="mance2" src="images/enemy/mance2.png" width="50" height="50" style="z-index=5;">
+						  <img id="mance3" src="images/enemy/mance3.png" width="50" height="50" style="z-index=5;">
+						  <img id="mance4" src="images/enemy/mance4.png" width="50" height="50" style="z-index=5;">
+						  <img id="mance5" src="images/enemy/mance5.png" width="50" height="50" style="z-index=5;">
+						</div>
+					</canvas>
+				<!--</div>-->
+			</div>
+		</div>
+		<div class="contentbox">
+			<div class='image'>
+				<img src="images/samwise.png">
+			</div>
+		</div>
+	</div>
+</div>
+<div id='infotab'>
+	<div class='content'>
+		<div class="contentbox">
+			<div id='announcement'>
+				Protect the Sams! Don't let the baddies capture them!
+			</div>
+		</div>
+		<div class="contentbox">
+			<div id='streakbox'>
+				Current Streak: 0<br>Highest Streak: 0
+			</div>
+			
+			<div id='scorebox'>
+				Current Score: 0
+			</div>
+		</div>
+		<div class="contentbox">
+			<div id='accuracybox'>
+				Current Accuracy:<br>100%
+			</div>
+		</div>
+		<div class="contentbox">
+			<input type="button" value="New Game" onClick="window.location.reload()">
+		</div>
+	</div>
+</div>
+<div id='background'>
+	<img src="images/thewall.png" class="stretch"/>
+</div>
+
+<script type="text/javascript" src="script.js"></script>
+</body>
+
+</html> 
