@@ -162,6 +162,7 @@ Enemy=function(type,health){
 	this.type = type;
 	this.health=health;
 	this.img;
+	this.spawncounter=30;
     this.x = Math.random() * 630+20;
     this.y = Math.random() * 470+20;
 	this.xdir=Math.random()*4-2;
@@ -175,22 +176,26 @@ Enemy=function(type,health){
     this.remove = false;
 	
     this.update = function() {
-		if(Math.random()*1<.02){
-			this.xdir=Math.random()*4-2;
-			this.ydir=Math.random()*4-2;
+		if(this.spawncounter==0){
+			if(Math.random()*1<.02){
+				this.xdir=Math.random()*4-2;
+				this.ydir=Math.random()*4-2;
+			}
+			// move up the screen by dir
+			this.y -= this.ydir;
+			this.x -= this.xdir;
+
+			// if off screen, flag for removal
+			if (this.y < -10) {
+				this.remove = true;
+			}
+
+			if (this.x < -10 || this.x>700) {
+				this.remove = true;
+			}
+		} else {
+			this.spawncounter-=1;
 		}
-        // move up the screen by dir
-        this.y -= this.ydir;
-		this.x -= this.xdir;
-
-        // if off screen, flag for removal
-        if (this.y < -10) {
-            this.remove = true;
-        }
-
-		if (this.x < -10 || this.x>700) {
-            this.remove = true;
-        }
     };
 
     this.render = function() {
@@ -311,7 +316,7 @@ var update = function() {
 			(entities[i].type === 'ringwraith') ||
 			(entities[i].type === 'gollum') ||
 			(entities[i].type === 'wildling') ||
-			(entities[i].type === 'mance')) ) {
+			(entities[i].type === 'mance'))&&entities[i].spawncounter==0 ) {
 				if(!samwise.dead){
 					samwise.dead=Collides(entities[i],{x: samwise.x, y:samwise.y, r:15});
 					if(samwise.dead&&wisedeath==true){
@@ -434,12 +439,12 @@ var update = function() {
 		}
 		entities.push(new Enemy(randenemy,hp));
     // reset the counter with a random value
-		nextEnemy = ( Math.random() * 100 ) + 80;
+		nextEnemy = ( Math.random() * 100 ) + 60;
 		if(!wisedeath){
-			nextEnemy-=40;
+			nextEnemy-=30;
 		}
 		if(!welldeath){
-			nextEnemy-=40;
+			nextEnemy-=30;
 		}
 		randnum=(Math.random() * 5 ) +5;
 	}
