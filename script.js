@@ -260,14 +260,14 @@ Enemy=function(type,health){
 	this.health=health;
 	this.img;
 	this.spawncounter=30;
-    this.x = Math.random() * 630+20;
-    this.y = Math.random() * 470+20;
-	this.xdir=Math.random()*4-2;
-	this.ydir=Math.random()*4-2;
-	while(((this.x-samwise.x)*(this.x-samwise.x)+(this.y-samwise.y)*(this.y-samwise.y)<200)
-	||((this.x-samwell.x)*(this.x-samwell.x)+(this.y-samwell.y)*(this.y-samwell.y)<200)){
-		this.x = Math.random() * 630+20;
-		this.y = Math.random() * 470+20;
+    this.x = Math.random() * (630*ratio)+20*ratio;
+    this.y = Math.random() * (470*ratio)+20*ratio;
+	this.xdir=Math.random()*4*ratio-2;
+	this.ydir=Math.random()*4*ratio-2;
+	while(((this.x-samwise.x)*(this.x-samwise.x)+(this.y-samwise.y)*(this.y-samwise.y)<200*ratio)
+	||((this.x-samwell.x)*(this.x-samwell.x)+(this.y-samwell.y)*(this.y-samwell.y)<200*ratio)){
+		this.x = Math.random() * 630*ratio+20*ratio;
+		this.y = Math.random() * 470*ratio+20*ratio;
 	}
 	this.r = 15*ratio;                // the radius of the bubble
     this.remove = false;
