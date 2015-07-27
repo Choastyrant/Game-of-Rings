@@ -2,10 +2,10 @@
 <head>
 <meta charset="UTF-8">
 
-<!--<meta name="viewport" content="width=device-width, 
+<meta name="viewport" content="width=device-width, 
     user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />-->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
 <link rel="stylesheet" type="text/css" href="style.css">
 
@@ -25,8 +25,11 @@
 			<div class='image'>
 				<img id='samwellimg' src="images/samwell.png">
 			</div>
-			<div id='announcement'>
-				<b>Protect the Sams! Don't let the baddies capture them!</b>
+			<div id='announcementbox'>
+				<img id='towncrier' src="images/towncrier.png">
+				<div id='announcement'>
+					<b>Protect the Sams! Don't let the baddies capture them!</b>
+				</div>
 			</div>
 		</div>
 		<div id="middlemiddle">
@@ -65,22 +68,20 @@
 				<img id='samwiseimg' src="images/samwise.png">
 			</div>
 			<div id="statbox">
-				<div id='streakbox'>
-					Current Streak: 0<br>Highest Streak: 0
-				</div>
-				
+				<img id='statistics' src="images/statistics.png">
 				<div id='scorebox'>
-					Current Score:<br>0
+					<b>Current Score:</b> 0
+				</div>
+				<div id='streakbox'>
+					<b>Current Streak:</b> 0<br><b>Highest Streak:</b> 0
 				</div>
 				<div id='accuracybox'>
-					Current Accuracy:<br>100%
+					<b>Current Accuracy:</b> 100%
 				</div>
-				<div id='newgamebutton'>
-					<div id='highestscore'>
-						Your Highscore:<br>0
-					</div>
-					<input type="button" id='ngbutton' value="New Game" onClick="window.location.reload()"></input>
+				<div id='highestscore'>
+					<b>Your Highscore:</b> 0
 				</div>
+				<input type="button" id='ngbutton' value="New Game" onClick="window.location.reload()"></input>
 			</div>
 		</div>
 	</div>

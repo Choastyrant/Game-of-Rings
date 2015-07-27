@@ -40,17 +40,36 @@ var score=0;
 var canvaswidth;
 var canvasheight;
 var ratio=1;
-var highestscore;
+var highestscore=0;
 
 var updateHighscore=function(){
-	var comment='Your Highscore:<br>'+highestscore;
+	var comment='<b>Your Highscore:</b> '+highestscore;
 	document.getElementById('highestscore').innerHTML = comment;
 }
+
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(',');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+    }
+    return "";
+} 
 
 window.onload = function() {
 	animate(step);
 	resizeGame();
-	highestscore = document.cookie;
+	highestscore = getCookie("hs");
+	if(!isNumber(highestscore)){
+		highestscore=0;
+		document.cookie="hs=0, expires=Thu, 28 Dec 2017 12:00:00 UTC";
+	}
 	updateHighscore();
 };
 
@@ -181,8 +200,6 @@ Input={
         context.arc(this.x + 5, this.y + 5, 5, 0,  Math.PI * 2, true);
         context.closePath();
         context.fill();
-		
-		//alert(canvas.offsetLeft + " " + canvas.offsetTop);
     }
 };
 
@@ -338,18 +355,18 @@ window.addEventListener('resize', resizeGame, false);
 window.addEventListener('orientationchange', resizeGame, false);
 
 var updateStreak=function(){
-	var comment='Current Streak: '+streak+'</br>Highest Streak: '+higheststreak;
+	var comment='<b>Current Streak:</b> '+streak+'</br><b>Highest Streak:</b> '+higheststreak;
 	document.getElementById('streakbox').innerHTML = comment;
 }
 
 var updateAccuracy=function(){
 	var num=(totalhits/totalclicks)*100;
-	var comment='Current Accuracy:</br>'+num.toFixed(2)+'%';
+	var comment='<b>Current Accuracy:</b> '+num.toFixed(2)+'%';
 	document.getElementById('accuracybox').innerHTML = comment;
 }
 
 var updateScore=function(){
-	var comment='Current Score:<br>'+score;
+	var comment='<b>Current Score:</b> '+score;
 	document.getElementById('scorebox').innerHTML = comment;
 }
 
@@ -390,7 +407,8 @@ var update = function() {
 							var comment='<b>Game over! Our lovable Sams have perished.</b>'
 							document.getElementById('announcement').innerHTML = comment;
 							if(score>highestscore){
-								document.cookie=score;
+								var str="hs="+score+", expires=Thu, 28 Dec 2017 12:00:00 UTC";
+								document.cookie=str;
 								highestscore=score;
 								updateHighscore();
 							}
