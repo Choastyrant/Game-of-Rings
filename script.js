@@ -199,8 +199,8 @@ var Negorpos=function(num){
 
 var samwise1=Math.floor((Math.random()*650)+1);
 var samwise2=Math.floor((Math.random()*450)+1);
-var samwisedir1=Negorpos((Math.random()*2)+3);
-var samwisedir2=Negorpos((Math.random()*2)+3);
+var samwisedir1=Negorpos((Math.random()*2)+2);
+var samwisedir2=Negorpos((Math.random()*2)+2);
 
 var samwell1=Math.floor((Math.random()*650)+1);
 var samwell2=Math.floor((Math.random()*450)+1);
@@ -453,6 +453,7 @@ var update = function() {
 							var comment='<b>Game over! Our lovable Sams have perished.</b>'
 							pushAnnouncement(comment);
 							if(score>highestscore){
+								pushAnnouncement("<b>You have achieved a personal highscore! Play again?</b>");
 								var str="hs="+score+", expires=Thu, 28 Dec 2017 12:00:00 UTC";
 								document.cookie=str;
 								highestscore=score;
@@ -475,6 +476,13 @@ var update = function() {
 						if(!wisedeath&&!welldeath){
 							var comment='<b>Game over! Our lovable Sams have perished.</b>'
 							pushAnnouncement(comment);
+							if(score>highestscore){
+								pushAnnouncement("<b>You have achieved a personal highscore! Play again?</b>");
+								var str="hs="+score+", expires=Thu, 28 Dec 2017 12:00:00 UTC";
+								document.cookie=str;
+								highestscore=score;
+								updateHighscore();
+							}
 						}
 					}
 				}
