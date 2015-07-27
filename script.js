@@ -37,10 +37,16 @@ var totalhits=0;
 var wisedeath=true;
 var welldeath=true;
 var score=0;
-var canvaswidth;
-var canvasheight;
 var ratio=1;
 var highestscore=0;
+var ua = navigator.userAgent.toLowerCase();
+var android = ua.indexOf('android') > -1 ? true : false;
+var ios = ( ua.indexOf('iphone') > -1 || ua.indexOf('ipad') > -1  ) ? 
+    true : false;
+
+var timer=0;
+//boolean variables for timer related events
+var timernote=true;
 
 var updateHighscore=function(){
 	var comment='<b>Your Highscore:</b> '+highestscore;
@@ -61,6 +67,14 @@ function getCookie(cname) {
     }
     return "";
 } 
+
+function pushAnnouncement(content){
+	document.getElementById('a5').innerHTML = document.getElementById('a4').innerHTML;
+	document.getElementById('a4').innerHTML = document.getElementById('a3').innerHTML;
+	document.getElementById('a3').innerHTML = document.getElementById('a2').innerHTML;
+	document.getElementById('a2').innerHTML = document.getElementById('a1').innerHTML;
+	document.getElementById('a1').innerHTML = content+"<hr>";
+}
 
 window.onload = function() {
 	animate(step);
@@ -109,6 +123,10 @@ function resizeGame() {
 	var leftmiddle=document.getElementById('leftmiddle');
 	offsetLeft = gameArea.offsetLeft+leftmiddle.clientWidth;
 	
+	if (android || ios) {
+            document.body.style.height = (window.innerHeight + 50) + 'px';
+     }
+		
 	window.setTimeout(function() {
 			window.scrollTo(0,1);
 	}, 1);
@@ -171,16 +189,23 @@ Sam.prototype.update = function() {
     this.y_speed = -this.y_speed;
   }
 };
+var Negorpos=function(num){
+	if(Math.random()<.5){
+		return num*-1;
+	} else {
+		return num;
+	}
+}
 
 var samwise1=Math.floor((Math.random()*650)+1);
 var samwise2=Math.floor((Math.random()*450)+1);
-var samwisedir1=(Math.random()*8)-4;
-var samwisedir2=(Math.random()*8)-4;
+var samwisedir1=Negorpos((Math.random()*2)+3);
+var samwisedir2=Negorpos((Math.random()*2)+3);
 
 var samwell1=Math.floor((Math.random()*650)+1);
 var samwell2=Math.floor((Math.random()*450)+1);
-var samwelldir1=(Math.random()*8)-4;
-var samwelldir2=(Math.random()*8)-4;
+var samwelldir1=Negorpos((Math.random()*2)+1);
+var samwelldir2=Negorpos((Math.random()*2)+1);
 
 var samwise=new Sam(samwise1,samwise2,samwisedir1,samwisedir2,samwiseicon,'samwise');
 var samwell=new Sam(samwell1,samwell2,samwelldir1,samwelldir2,samwellicon,'samwell');
@@ -250,8 +275,8 @@ Enemy=function(type,health){
     this.update = function() {
 		if(this.spawncounter==0){
 			if(Math.random()*1<.02){
-				this.xdir=(Math.random()*4-2)*ratio;
-				this.ydir=(Math.random()*4-2)*ratio;
+				this.xdir=Negorpos((Math.random()*3)*ratio);
+				this.ydir=Negorpos((Math.random()*3)*ratio);
 			}
 			// move up the screen by dir
 			this.y -= this.ydir;
@@ -351,6 +376,26 @@ canvas.addEventListener('mousedown', function(e) {
 	Input.set(e);
 }, false);
 
+// listen for touches
+window.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    // the event object has an array
+    // named touches; we just want
+    // the first touch
+    Input.set(e.touches[0]);
+}, false);
+window.addEventListener('touchmove', function(e) {
+    // we're not interested in this,
+    // but prevent default behaviour
+    // so the screen doesn't scroll
+    // or zoom
+    e.preventDefault();
+}, false);
+window.addEventListener('touchend', function(e) {
+    // as above
+    e.preventDefault();
+}, false);
+
 window.addEventListener('resize', resizeGame, false);
 window.addEventListener('orientationchange', resizeGame, false);
 
@@ -371,6 +416,7 @@ var updateScore=function(){
 }
 
 var update = function() {
+	timer+=1;
 	samwise.update();
 	samwell.update();
 	if (Input.tapped) {
@@ -401,11 +447,11 @@ var update = function() {
 						samwise.y=-50;
 						wisedeath=false;
 						var comment='<b>Samwise Gamgee has died! Poor Frodo!</b>'
-						document.getElementById('announcement').innerHTML = comment;
-						document.getElementById('samwellimg').src='images/samwelldead.png';
+						pushAnnouncement(comment);
+						document.getElementById('samwiseimg').src='images/samwisedead.png';
 						if(!wisedeath&&!welldeath){
 							var comment='<b>Game over! Our lovable Sams have perished.</b>'
-							document.getElementById('announcement').innerHTML = comment;
+							pushAnnouncement(comment);
 							if(score>highestscore){
 								var str="hs="+score+", expires=Thu, 28 Dec 2017 12:00:00 UTC";
 								document.cookie=str;
@@ -424,11 +470,11 @@ var update = function() {
 						samwell.y=-50;
 						welldeath=false;
 						var comment='<b>Samwell Tarly has died! He has joined Jon Snow!</b>'
-						document.getElementById('announcement').innerHTML = comment;
-						document.getElementById('samwiseimg').src='images/samwisedead.png';
+						pushAnnouncement(comment);
+						document.getElementById('samwellimg').src='images/samwelldead.png';
 						if(!wisedeath&&!welldeath){
 							var comment='<b>Game over! Our lovable Sams have perished.</b>'
-							document.getElementById('announcement').innerHTML = comment;
+							pushAnnouncement(comment);
 						}
 					}
 				}
@@ -466,6 +512,12 @@ var update = function() {
         if (entities[i].remove) {
             entities.splice(i, 1);
         }
+		
+		//timer related events
+		if(timer>100&&timernote){
+			pushAnnouncement("<b>Your first enemy has appeared! Click on their heads to kill them. Don't let them touch our beloved Sams! Be careful, some enemies are stronger than others!</b>");
+			timernote=false;
+		}
     }
 	if((testenemy)&&!(teststreak)){
 		if(higheststreak<streak){
