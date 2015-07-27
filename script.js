@@ -22,7 +22,7 @@ var animate = window.requestAnimationFrame ||
  //init
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
-var offsetTop = canvas.offsetTop+130;
+var offsetTop = canvas.offsetTop;
 var offsetLeft = canvas.offsetLeft;
 var nextEnemy= 100;
 var randnum=(Math.random() * 5 ) +5;
@@ -37,10 +37,63 @@ var totalhits=0;
 var wisedeath=true;
 var welldeath=true;
 var score=0;
+var canvaswidth;
+var canvasheight;
+var ratio=1;
+var highestscore;
+
+var updateHighscore=function(){
+	var comment='Your Highscore:<br>'+highestscore;
+	document.getElementById('highestscore').innerHTML = comment;
+}
 
 window.onload = function() {
-  animate(step);
+	animate(step);
+	resizeGame();
+	highestscore = document.cookie;
+	updateHighscore();
 };
+
+function resizeGame() {
+    var gameArea = document.getElementById('gameArea');
+    var widthToHeight = 5 / 4;
+    var newWidth = window.innerWidth;
+    var newHeight = window.innerHeight;
+    var newWidthToHeight = newWidth / newHeight;
+    
+    if (newWidthToHeight > widthToHeight) {
+        newWidth = newHeight * widthToHeight;
+        gameArea.style.height = newHeight + 'px';
+        gameArea.style.width = newWidth + 'px';
+    } else {
+        newHeight = newWidth / widthToHeight;
+        gameArea.style.width = newWidth + 'px';
+        gameArea.style.height = newHeight + 'px';
+    }
+    
+    gameArea.style.marginTop = (-newHeight / 2) + 'px';
+    gameArea.style.marginLeft = (-newWidth / 2) + 'px';
+	
+	var middleArea = document.getElementById('middlemiddle');
+	if(middleArea.clientWidth/700>middleArea.clientHeight/500){
+		ratio=middleArea.clientHeight/500;
+		canvas.style.width=ratio*canvas.width;
+		canvas.style.height=middleArea.clientHeight;
+	} else {
+		ratio=middleArea.clientWidth/700;
+		canvas.style.height=ratio*canvas.height;
+		canvas.style.width=middleArea.clientWidth;
+	}
+	
+	var middle = document.getElementById('middle');
+	offsetTop = middle.offsetTop;
+	var leftmiddle=document.getElementById('leftmiddle');
+	offsetLeft = gameArea.offsetLeft+leftmiddle.clientWidth;
+	
+	window.setTimeout(function() {
+			window.scrollTo(0,1);
+	}, 1);
+}
 
 var step = function() {
   update();
@@ -65,20 +118,20 @@ Sam.prototype.render = function() {
 	context.beginPath();
 	context.arc(this.x, this.y, this.radius, 2 * Math.PI, false);
 	if(!this.dead){
-		context.drawImage(this.img,this.x,this.y,50,50);
+		context.drawImage(this.img,this.x,this.y,50*ratio,50*ratio);
 	} else {
 		if(this.type=='samwise'){
-			context.drawImage(samwiseicondead,this.deathx,this.deathy,50,80);
+			context.drawImage(samwiseicondead,this.deathx,this.deathy,50*ratio,80*ratio);
 		} else {
-			context.drawImage(samwellicondead,this.deathx,this.deathy,50,80);
+			context.drawImage(samwellicondead,this.deathx,this.deathy,50*ratio,80*ratio);
 		}
 	}
 };
 
 Sam.prototype.update = function() {
 	if(!this.dead){
-		this.x += this.x_speed;
-		this.y += this.y_speed;
+		this.x += (this.x_speed*ratio);
+		this.y += (this.y_speed*ratio);
 	} else {
 		return;
 	}
@@ -119,8 +172,8 @@ Input={
     tapped :false,
 
     set: function(data) {
-        this.x = data.pageX - offsetLeft;
-		this.y = data.pageY - offsetTop;
+        this.x = (data.pageX - offsetLeft)/ratio;
+		this.y = (data.pageY - offsetTop)/ratio;
         this.tapped = true; 
 
 		context.fillStyle = 'red';
@@ -128,6 +181,8 @@ Input={
         context.arc(this.x + 5, this.y + 5, 5, 0,  Math.PI * 2, true);
         context.closePath();
         context.fill();
+		
+		//alert(canvas.offsetLeft + " " + canvas.offsetTop);
     }
 };
 
@@ -136,7 +191,7 @@ Touch=function(x,y){
 	this.type = 'touch'; 
     this.x = x;             // the x coordinate
     this.y = y;             // the y coordinate
-    this.r = 5;             // the radius
+    this.r = 5*ratio;             // the radius
     this.opacity = 1;       // initial opacity; the dot will fade out
     this.fade = 0.05;       // amount by which to fade on each game tick
     this.remove = false;    // flag for removing this entity. POP.update
@@ -172,14 +227,14 @@ Enemy=function(type,health){
 		this.x = Math.random() * 630+20;
 		this.y = Math.random() * 470+20;
 	}
-	this.r = 15;                // the radius of the bubble
+	this.r = 15*ratio;                // the radius of the bubble
     this.remove = false;
 	
     this.update = function() {
 		if(this.spawncounter==0){
 			if(Math.random()*1<.02){
-				this.xdir=Math.random()*4-2;
-				this.ydir=Math.random()*4-2;
+				this.xdir=(Math.random()*4-2)*ratio;
+				this.ydir=(Math.random()*4-2)*ratio;
 			}
 			// move up the screen by dir
 			this.y -= this.ydir;
@@ -249,7 +304,7 @@ Enemy=function(type,health){
 	
 		context.beginPath();
 		context.arc(this.x, this.y, this.r, 2 * Math.PI, false);
-		context.drawImage(this.img,this.x,this.y,50,50);
+		context.drawImage(this.img,this.x,this.y,50*ratio,50*ratio);
     };
 }
 
@@ -279,6 +334,9 @@ canvas.addEventListener('mousedown', function(e) {
 	Input.set(e);
 }, false);
 
+window.addEventListener('resize', resizeGame, false);
+window.addEventListener('orientationchange', resizeGame, false);
+
 var updateStreak=function(){
 	var comment='Current Streak: '+streak+'</br>Highest Streak: '+higheststreak;
 	document.getElementById('streakbox').innerHTML = comment;
@@ -291,7 +349,7 @@ var updateAccuracy=function(){
 }
 
 var updateScore=function(){
-	var comment='Current Score:'+score;
+	var comment='Current Score:<br>'+score;
 	document.getElementById('scorebox').innerHTML = comment;
 }
 
@@ -318,7 +376,7 @@ var update = function() {
 			(entities[i].type === 'wildling') ||
 			(entities[i].type === 'mance'))&&entities[i].spawncounter==0 ) {
 				if(!samwise.dead){
-					samwise.dead=Collides(entities[i],{x: samwise.x, y:samwise.y, r:15});
+					samwise.dead=Collides(entities[i],{x: samwise.x, y:samwise.y, r:(15*ratio)});
 					if(samwise.dead&&wisedeath==true){
 						samwise.deathx=samwise.x;
 						samwise.deathy=samwise.y;
@@ -331,6 +389,11 @@ var update = function() {
 						if(!wisedeath&&!welldeath){
 							var comment='<b>Game over! Our lovable Sams have perished.</b>'
 							document.getElementById('announcement').innerHTML = comment;
+							if(score>highestscore){
+								document.cookie=score;
+								highestscore=score;
+								updateHighscore();
+							}
 						}
 					}
 				}
@@ -451,7 +514,7 @@ var update = function() {
 };
 
 var render = function() {
-	context.drawImage(map,0,0,700,500);
+	context.drawImage(map,0,0,canvas.width,canvas.height);
 	samwise.render();
 	samwell.render();
 	var i;
