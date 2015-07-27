@@ -127,6 +127,10 @@ function resizeGame() {
             document.body.style.height = (window.innerHeight + 50) + 'px';
      }
 		
+	var topArea = document.getElementById('toparea');
+	var topBar = document.getElementById('topBar');
+	topBar.style.height=topArea.clientHeight;
+	
 	window.setTimeout(function() {
 			window.scrollTo(0,1);
 	}, 1);
