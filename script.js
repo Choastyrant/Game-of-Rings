@@ -4,6 +4,8 @@ This game would not have been possible without the following 3 guides.
 	https://robots.thoughtbot.com/pong-clone-in-javascript
 	http://www.html5rocks.com/en/tutorials/casestudies/gopherwoord-studios-resizing-html5-games/
 and the many people at stack overflow!
+
+This game was written in the span of four days entirely by me.
 */
 
 window.requestAnimFrame = (function(){
@@ -353,34 +355,34 @@ Enemy=function(type,health){
 				} else if(!samwell.dead){
 					this.xdir=samwell.x-this.x;
 					this.ydir=samwell.y-this.y;
-					if(this.xdir>.6){
-						this.xdir=.6;
+					if(this.xdir>.5){
+						this.xdir=.5;
 					}
-					if(this.xdir<-.6){
-						this.xdir=-.6;
+					if(this.xdir<-.5){
+						this.xdir=-.5;
 					}
-					if(this.ydir>.6){
-						this.ydir=.6;
+					if(this.ydir>.5){
+						this.ydir=.5;
 					}
-					if(this.ydir<-.6){
-						this.ydir=-.6;
+					if(this.ydir<-.5){
+						this.ydir=-.5;
 					}
 					this.y += this.ydir;
 					this.x += this.xdir;
 				} else if(!samwise.dead){
 					this.xdir=samwise.x-this.x;
 					this.ydir=samwise.y-this.y;
-					if(this.xdir>.6){
-						this.xdir=.6;
+					if(this.xdir>.5){
+						this.xdir=.5;
 					}
-					if(this.xdir<-.6){
-						this.xdir=-.6;
+					if(this.xdir<-.5){
+						this.xdir=-.5;
 					}
-					if(this.ydir>.6){
-						this.ydir=.6;
+					if(this.ydir>.5){
+						this.ydir=.5;
 					}
-					if(this.ydir<-.6){
-						this.ydir=-.6;
+					if(this.ydir<-.5){
+						this.ydir=-.5;
 					}
 					this.y += this.ydir;
 					this.x += this.xdir;
@@ -388,17 +390,17 @@ Enemy=function(type,health){
 			} else if(this.type=='ringwraithfrodo'){
 				this.xdir=frodo.x-this.x;
 				this.ydir=frodo.y-this.y;
-				if(this.xdir>1.2){
-					this.xdir=1.2;
+				if(this.xdir>.8){
+					this.xdir=.8;
 				}
-				if(this.xdir<-1.2){
-					this.xdir=-1.2;
+				if(this.xdir<-.8){
+					this.xdir=-.8;
 				}
-				if(this.ydir>1.2){
-					this.ydir=1.2;
+				if(this.ydir>.8){
+					this.ydir=.8;
 				}
-				if(this.ydir<-1.2){
-					this.ydir=-1.2;
+				if(this.ydir<-.8){
+					this.ydir=-.8;
 				}
 				this.y += this.ydir;
 				this.x += this.xdir;
@@ -771,7 +773,7 @@ update = function() {
 	if(mission2bstart&&mission2dgtimer<=0&&mission2dgcount<10&&!gameover){
 		entities.push(new Enemy('dragonglass',1));
 		mission2dgcount+=1;
-		mission2dgtimer=200;
+		mission2dgtimer=180;
 	}
 	
 	if(mission2wwcount>=10&&!mission2done&&!gameover){
