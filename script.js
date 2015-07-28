@@ -319,7 +319,7 @@ Enemy=function(type,health){
 	this.timer=0;
 	
 	if(this.type=='ringwraithfrodo'){
-		this.spawncounter=50;
+		this.spawncounter=60;
 		while((this.x-frodo.x)*(this.x-frodo.x)+(this.y-frodo.y)*(this.y-frodo.y)<200*ratio){
 			this.x = Math.random() * 630*ratio+20*ratio;
 			this.y = Math.random() * 470*ratio+20*ratio;
@@ -332,7 +332,7 @@ Enemy=function(type,health){
 		}
 		if(this.type=='whitewalker'&&this.health==1&&this.timer<=0){
 			this.health=2;
-			this.spawncounter=50;
+			this.spawncounter=60;
 		}
 		if(this.spawncounter==0){
 			if(this.type=='dragonglass'){
@@ -378,17 +378,17 @@ Enemy=function(type,health){
 			} else if(this.type=='ringwraithfrodo'){
 				this.xdir=frodo.x-this.x;
 				this.ydir=frodo.y-this.y;
-				if(this.xdir>1.5){
-					this.xdir=1.5;
+				if(this.xdir>1.2){
+					this.xdir=1.2;
 				}
-				if(this.xdir<-1.5){
-					this.xdir=-1.5;
+				if(this.xdir<-1.2){
+					this.xdir=-1.2;
 				}
-				if(this.ydir>1.5){
-					this.ydir=1.5;
+				if(this.ydir>1.2){
+					this.ydir=1.2;
 				}
-				if(this.ydir<-1.5){
-					this.ydir=-1.5;
+				if(this.ydir<-1.2){
+					this.ydir=-1.2;
 				}
 				this.y += this.ydir;
 				this.x += this.xdir;
