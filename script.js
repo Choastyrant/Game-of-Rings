@@ -43,7 +43,8 @@ var ua = navigator.userAgent.toLowerCase();
 var android = ua.indexOf('android') > -1 ? true : false;
 var ios = ( ua.indexOf('iphone') > -1 || ua.indexOf('ipad') > -1  ) ? 
     true : false;
-
+var gameArea = document.getElementById('gameArea');
+	
 var timer=0;
 //boolean variables for timer related events
 var timernote=true;
@@ -78,7 +79,9 @@ function pushAnnouncement(content){
 
 window.onload = function() {
 	animate(step);
-	resizeGame();
+	gameArea.style.height="720px";
+	gameArea.style.width="1200px";
+	resizeGame()
 	highestscore = getCookie("hs");
 	if(!isNumber(highestscore)){
 		highestscore=0;
@@ -88,12 +91,10 @@ window.onload = function() {
 };
 
 function resizeGame() {
-    var gameArea = document.getElementById('gameArea');
     var widthToHeight = 5 / 4;
     var newWidth = window.innerWidth;
     var newHeight = window.innerHeight;
     var newWidthToHeight = newWidth / newHeight;
-    
     if (newWidthToHeight > widthToHeight) {
         newWidth = newHeight * widthToHeight;
         gameArea.style.height = newHeight + 'px';
@@ -106,14 +107,15 @@ function resizeGame() {
     
     gameArea.style.marginTop = (-newHeight / 2) + 'px';
     gameArea.style.marginLeft = (-newWidth / 2) + 'px';
+	gameArea.style.fontSize = (newWidth / 1220) + 'em';
 	
 	var middleArea = document.getElementById('middlemiddle');
-	if(middleArea.clientWidth/700>middleArea.clientHeight/500){
-		ratio=middleArea.clientHeight/500;
+	if(middleArea.clientWidth/806>middleArea.clientHeight/576){
+		ratio=middleArea.clientHeight/576;
 		canvas.style.width=ratio*canvas.width;
 		canvas.style.height=middleArea.clientHeight;
 	} else {
-		ratio=middleArea.clientWidth/700;
+		ratio=middleArea.clientWidth/806;
 		canvas.style.height=ratio*canvas.height;
 		canvas.style.width=middleArea.clientWidth;
 	}
@@ -287,11 +289,11 @@ Enemy=function(type,health){
 			this.x -= this.xdir;
 
 			// if off screen, flag for removal
-			if (this.y < -10) {
+			if (this.y < -10 || this.y>580) {
 				this.remove = true;
 			}
 
-			if (this.x < -10 || this.x>700) {
+			if (this.x < -10 || this.x>800) {
 				this.remove = true;
 			}
 		} else {

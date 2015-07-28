@@ -14,10 +14,21 @@
 </head>
 
 <body>
+<div id="fb-root"></div>
+
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.4";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
 
 <div id='topBar'></div>
 <div id='gameArea'>
 	<div id='toparea'>
+	
 		<img id="banner" src="images/gameofrings.png">
 	</div>
 	<div id='middle'>
@@ -41,7 +52,7 @@
 			</div>
 		</div>
 		<div id="middlemiddle">
-			<canvas id="canvas" width="700" height="500" align="center">
+			<canvas id="canvas" width="806" height="576" align="center">
 				Your browser dosen't support the HTML5 canvas.
 				<div style="display:none;">
 				  <img id="map" src="images/lotrmap.jpg">
@@ -77,6 +88,7 @@
 			</div>
 			<div id="statbox">
 				<img id='statistics' src="images/statistics.png">
+				<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button"></div>
 				<div id='scorebox'>
 					<b>Current Score:</b> 0
 				</div>
@@ -95,10 +107,11 @@
 	</div>
 </div>
 <div id='background'>
+	<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button"></div>
 	<img src="images/thewall.png" class="stretch"/>
 </div>
 
 <script type="text/javascript" src="script.js"></script>
-</body>
 
+</body>
 </html> 
