@@ -383,21 +383,21 @@ canvas.addEventListener('mousedown', function(e) {
 }, false);
 
 // listen for touches
-window.addEventListener('touchstart', function(e) {
+canvas.addEventListener('touchstart', function(e) {
     e.preventDefault();
     // the event object has an array
     // named touches; we just want
     // the first touch
     Input.set(e.touches[0]);
 }, false);
-window.addEventListener('touchmove', function(e) {
+canvas.addEventListener('touchmove', function(e) {
     // we're not interested in this,
     // but prevent default behaviour
     // so the screen doesn't scroll
     // or zoom
     e.preventDefault();
 }, false);
-window.addEventListener('touchend', function(e) {
+canvas.addEventListener('touchend', function(e) {
     // as above
     e.preventDefault();
 }, false);
