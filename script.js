@@ -1,3 +1,11 @@
+/*Copyright 2015 by Tony Hung
+This game would not have been possible without the following 3 guides. 
+	http://www.smashingmagazine.com/2012/10/design-your-own-mobile-game/
+	https://robots.thoughtbot.com/pong-clone-in-javascript
+	http://www.html5rocks.com/en/tutorials/casestudies/gopherwoord-studios-resizing-html5-games/
+and the many people at stack overflow!
+*/
+
 window.requestAnimFrame = (function(){
   return  window.requestAnimationFrame       || 
           window.webkitRequestAnimationFrame || 
@@ -320,7 +328,9 @@ Enemy=function(type,health){
 	
 	if(this.type=='ringwraithfrodo'){
 		this.spawncounter=60;
-		while((this.x-frodo.x)*(this.x-frodo.x)+(this.y-frodo.y)*(this.y-frodo.y)<200*ratio){
+		while(((this.x-frodo.x)*(this.x-frodo.x)+(this.y-frodo.y)*(this.y-frodo.y)<200*ratio)
+		||((this.x-samwise.x)*(this.x-samwise.x)+(this.y-samwise.y)*(this.y-samwise.y)<150*ratio)
+		||((this.x-samwell.x)*(this.x-samwell.x)+(this.y-samwell.y)*(this.y-samwell.y)<150*ratio)){
 			this.x = Math.random() * 630*ratio+20*ratio;
 			this.y = Math.random() * 470*ratio+20*ratio;
 		}
@@ -484,7 +494,7 @@ Enemy=function(type,health){
 }
 
 
-var Collides=function(a,b){
+Collides=function(a,b){
 	var distance_squared = ( ((a.x - b.x) * (a.x - b.x)) + 
                                 ((a.y - b.y) * (a.y - b.y)));
 
@@ -532,28 +542,28 @@ canvas.addEventListener('touchend', function(e) {
 window.addEventListener('resize', resizeGame, false);
 window.addEventListener('orientationchange', resizeGame, false);
 
-var updateStreak=function(){
+updateStreak=function(){
 	var comment='<b>Current Streak:</b> '+streak+'</br><b>Highest Streak:</b> '+higheststreak;
 	document.getElementById('streakbox').innerHTML = comment;
 }
 
-var updateAccuracy=function(){
+updateAccuracy=function(){
 	var num=(totalhits/totalclicks)*100;
 	var comment='<b>Current Accuracy:</b> '+num.toFixed(2)+'%';
 	document.getElementById('accuracybox').innerHTML = comment;
 }
 
-var updateScore=function(){
+updateScore=function(){
 	var comment='<b>Current Score:</b> '+score;
 	document.getElementById('scorebox').innerHTML = comment;
 }
 
-var updateDG=function(){
+updateDG=function(){
 	var comment='<b>Dragonglass:</b> '+mission2dginventory;
 	document.getElementById('inventory').innerHTML = comment;
 }
 
-var update = function() {
+update = function() {
 	if(!samwell.dead||!samwise.dead){
 		timer+=1;
 		difficultytimer+=1;
@@ -863,7 +873,7 @@ var update = function() {
 	}
 };
 
-var render = function() {
+render = function() {
 	if(!mission2start){
 		context.drawImage(map,0,0,canvas.width,canvas.height);
 	} else {
