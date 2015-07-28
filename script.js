@@ -1,5 +1,3 @@
-// http://paulirish.com/2011/requestanimationframe-for-smart-animating
-// shim layer with setTimeout fallback
 window.requestAnimFrame = (function(){
   return  window.requestAnimationFrame       || 
           window.webkitRequestAnimationFrame || 
@@ -47,12 +45,26 @@ var gameArea = document.getElementById('gameArea');
 var spawnconstant=1;
 var difficultytimer=0;
 var timer=0;
+var pausegame=false;
+
 //boolean variables for timer related events
 var timernote=true;
 var frodostart=false;
 var frododone=false;
 var frodotimer=200;
 var frododeathtimer=0;
+var mission2start=false;
+var mission2astart=false;
+var mission2bstart=false;
+var mission2doneb=false;
+var mission2done=false;
+var mission2dgtimer=0;
+var mission2wwtimer=0;
+var mission2wwcount=0;
+var mission2dgcount=0;
+var mission2dginventory=0;
+var gameover=false;
+var wintimer=200;
 
 var updateHighscore=function(){
 	var comment='<b>Your Highscore:</b> '+highestscore;
@@ -80,6 +92,17 @@ function pushAnnouncement(content){
 	document.getElementById('a3').innerHTML = document.getElementById('a2').innerHTML;
 	document.getElementById('a2').innerHTML = document.getElementById('a1').innerHTML;
 	document.getElementById('a1').innerHTML = content+"<hr>";
+}
+
+var pauseGame=function(){
+	if(pausegame==false){
+		pausegame=true;
+		pushAnnouncement("<b>Game paused</br>");
+	} else {
+		pausegame=false;
+		pushAnnouncement("<b>Game unpaused</br>");
+		animate(step);
+	}
 }
 
 window.onload = function() {
@@ -144,9 +167,11 @@ function resizeGame() {
 }
 
 var step = function() {
-  update();
-  render();
-  animate(step);
+	if(!pausegame){
+		update();
+		render();
+		animate(step);
+	}
 };
 
 function Sam(x,y,x_speed,y_speed,img,type) {
@@ -233,15 +258,17 @@ Input={
     tapped :false,
 
     set: function(data) {
-        this.x = (data.pageX - offsetLeft)/ratio;
-		this.y = (data.pageY - offsetTop)/ratio;
-        this.tapped = true; 
+		if(!pausegame){
+			this.x = (data.pageX - offsetLeft)/ratio;
+			this.y = (data.pageY - offsetTop)/ratio;
+			this.tapped = true; 
 
-		context.fillStyle = 'red';
-        context.beginPath();
-        context.arc(this.x + 5, this.y + 5, 5, 0,  Math.PI * 2, true);
-        context.closePath();
-        context.fill();
+			context.fillStyle = 'red';
+			context.beginPath();
+			context.arc(this.x + 5, this.y + 5, 5, 0,  Math.PI * 2, true);
+			context.closePath();
+			context.fill();
+		}
     }
 };
 
@@ -253,7 +280,7 @@ Touch=function(x,y){
     this.r = 5*ratio;             // the radius
     this.opacity = 1;       // initial opacity; the dot will fade out
     this.fade = 0.05;       // amount by which to fade on each game tick
-    this.remove = false;    // flag for removing this entity. POP.update
+    this.remove = false;    // flag for removing this entity. update
                             // will take care of this
 	this.spawncounter=0;
 	
@@ -289,8 +316,10 @@ Enemy=function(type,health){
 	}
 	this.r = 15*ratio;                // the radius of the bubble
     this.remove = false;
+	this.timer=0;
+	
 	if(this.type=='ringwraithfrodo'){
-		this.spawncounter=60;
+		this.spawncounter=50;
 		while((this.x-frodo.x)*(this.x-frodo.x)+(this.y-frodo.y)*(this.y-frodo.y)<200*ratio){
 			this.x = Math.random() * 630*ratio+20*ratio;
 			this.y = Math.random() * 470*ratio+20*ratio;
@@ -298,21 +327,68 @@ Enemy=function(type,health){
 		this.r=12*ratio;
 	}
     this.update = function() {
+		if(this.timer>0){
+			this.timer-=1;
+		}
+		if(this.type=='whitewalker'&&this.health==1&&this.timer<=0){
+			this.health=2;
+			this.spawncounter=50;
+		}
 		if(this.spawncounter==0){
-			if(this.type=='ringwraithfrodo'){
+			if(this.type=='dragonglass'){
+				//nothing, don't move
+			} else if(this.type=='whitewalker'){
+				if(this.health==1){
+					//nothing don't move
+				} else if(!samwell.dead){
+					this.xdir=samwell.x-this.x;
+					this.ydir=samwell.y-this.y;
+					if(this.xdir>.6){
+						this.xdir=.6;
+					}
+					if(this.xdir<-.6){
+						this.xdir=-.6;
+					}
+					if(this.ydir>.6){
+						this.ydir=.6;
+					}
+					if(this.ydir<-.6){
+						this.ydir=-.6;
+					}
+					this.y += this.ydir;
+					this.x += this.xdir;
+				} else if(!samwise.dead){
+					this.xdir=samwise.x-this.x;
+					this.ydir=samwise.y-this.y;
+					if(this.xdir>.6){
+						this.xdir=.6;
+					}
+					if(this.xdir<-.6){
+						this.xdir=-.6;
+					}
+					if(this.ydir>.6){
+						this.ydir=.6;
+					}
+					if(this.ydir<-.6){
+						this.ydir=-.6;
+					}
+					this.y += this.ydir;
+					this.x += this.xdir;
+				}
+			} else if(this.type=='ringwraithfrodo'){
 				this.xdir=frodo.x-this.x;
 				this.ydir=frodo.y-this.y;
-				if(this.xdir>.8){
-					this.xdir=.8;
+				if(this.xdir>1.5){
+					this.xdir=1.5;
 				}
-				if(this.xdir<-.8){
-					this.xdir=-.8;
+				if(this.xdir<-1.5){
+					this.xdir=-1.5;
 				}
-				if(this.ydir>.8){
-					this.ydir=.8;
+				if(this.ydir>1.5){
+					this.ydir=1.5;
 				}
-				if(this.ydir<-.8){
-					this.ydir=-.8;
+				if(this.ydir<-1.5){
+					this.ydir=-1.5;
 				}
 				this.y += this.ydir;
 				this.x += this.xdir;
@@ -327,10 +403,16 @@ Enemy=function(type,health){
 			}
 			// if off screen, flag for removal
 			if (this.y < -10 || this.y>600) {
+				if(this.type='whitewalker'){
+					mission2wwcount-=1;
+				}
 				this.remove = true;
 			}
 
 			if (this.x < -10 || this.x>820) {
+				if(this.type='whitewalker'){
+					mission2wwcount-=1;
+				}
 				this.remove = true;
 			}
 		} else {
@@ -385,6 +467,14 @@ Enemy=function(type,health){
 			} else {
 				this.img=gollum1;
 			}
+		} else if(this.type=='whitewalker'){
+			if(this.health==2){
+				this.img=whitewalker;
+			} else {
+				this.img=whitewalkerdead;
+			}
+		} else if(this.type=='dragonglass'){
+			this.img=dragonglass;
 		}
 	
 		context.beginPath();
@@ -458,9 +548,16 @@ var updateScore=function(){
 	document.getElementById('scorebox').innerHTML = comment;
 }
 
+var updateDG=function(){
+	var comment='<b>Dragonglass:</b> '+mission2dginventory;
+	document.getElementById('inventory').innerHTML = comment;
+}
+
 var update = function() {
-	timer+=1;
-	difficultytimer+=1;
+	if(!samwell.dead||!samwise.dead){
+		timer+=1;
+		difficultytimer+=1;
+	}
 	samwise.update();
 	samwell.update();
 	if(frodostart&&!frododone){
@@ -485,51 +582,67 @@ var update = function() {
 			(entities[i].type === 'gollum') ||
 			(entities[i].type === 'wildling') ||
 			(entities[i].type === 'mance') ||
-			(entities[i].type === 'ringwraithfrodo')) {
+			(entities[i].type === 'ringwraithfrodo') ||
+			(entities[i].type === 'whitewalker') ||
+			(entities[i].type === 'dragonglass')) {
 				if(!samwise.dead&&entities[i].spawncounter==0){
-					samwise.dead=Collides(entities[i],{x: samwise.x, y:samwise.y, r:(15*ratio)});
-					if(samwise.dead&&wisedeath==true){
-						samwise.deathx=samwise.x;
-						samwise.deathy=samwise.y;
-						samwise.x=-50;
-						samwise.y=-50;
-						wisedeath=false;
-						var comment='<b>Samwise Gamgee has died! Poor Frodo!</b>'
-						pushAnnouncement(comment);
-						document.getElementById('samwiseimg').src='images/samwisedead.png';
-						if(!wisedeath&&!welldeath){
-							var comment='<b>Game over! Our lovable Sams have perished.</b>'
+					if((entities[i].type=='dragonglass') || (entities[i].type=='whitewalker'&&entities[i].health==1)){
+						//do nothing
+					} else {
+						samwise.dead=Collides(entities[i],{x: samwise.x, y:samwise.y, r:(15*ratio)});
+						if(samwise.dead&&wisedeath==true){
+							samwise.deathx=samwise.x;
+							samwise.deathy=samwise.y;
+							samwise.x=-50;
+							samwise.y=-50;
+							wisedeath=false;
+							var comment='<b>Samwise Gamgee has died! Poor Frodo!</b>'
 							pushAnnouncement(comment);
-							if(score>highestscore){
-								pushAnnouncement("<b>You have achieved a personal highscore! Play again?</b>");
-								var str="hs="+score+", expires=Thu, 28 Dec 2017 12:00:00 UTC";
-								document.cookie=str;
-								highestscore=score;
-								updateHighscore();
+							document.getElementById('samwiseimg').src='images/samwisedead.png';
+							if(!wisedeath&&!welldeath){
+								var comment='<b>Game over! Our lovable Sams have perished.</b>'
+								mission2done=true;
+								frododone=true;
+								gameover=true;
+								pushAnnouncement(comment);
+								if(score>highestscore){
+									pushAnnouncement("<b>You have achieved a personal highscore! Play again?</b>");
+									var str="hs="+score+", expires=Thu, 28 Dec 2017 12:00:00 UTC";
+									document.cookie=str;
+									highestscore=score;
+									updateHighscore();
+								}
 							}
 						}
 					}
 				}
 				if(!samwell.dead&&entities[i].spawncounter==0){
-					samwell.dead=Collides(entities[i],{x: samwell.x, y:samwell.y, r:15});
-					if(samwell.dead&&welldeath==true){
-						samwell.deathx=samwell.x;
-						samwell.deathy=samwell.y;
-						samwell.x=-50;
-						samwell.y=-50;
-						welldeath=false;
-						var comment='<b>Samwell Tarly has died! He has joined Jon Snow!</b>'
-						pushAnnouncement(comment);
-						document.getElementById('samwellimg').src='images/samwelldead.png';
-						if(!wisedeath&&!welldeath){
-							var comment='<b>Game over! Our lovable Sams have perished.</b>'
+					if((entities[i].type=='dragonglass') || (entities[i].type=='whitewalker'&&entities[i].health==1)){
+						//do nothing
+					} else {
+						samwell.dead=Collides(entities[i],{x: samwell.x, y:samwell.y, r:15});
+						if(samwell.dead&&welldeath==true){
+							samwell.deathx=samwell.x;
+							samwell.deathy=samwell.y;
+							samwell.x=-50;
+							samwell.y=-50;
+							welldeath=false;
+							var comment='<b>Samwell Tarly has died! He has joined Jon Snow!</b>'
 							pushAnnouncement(comment);
-							if(score>highestscore){
-								pushAnnouncement("<b>You have achieved a personal highscore! Play again?</b>");
-								var str="hs="+score+", expires=Thu, 28 Dec 2017 12:00:00 UTC";
-								document.cookie=str;
-								highestscore=score;
-								updateHighscore();
+							document.getElementById('samwellimg').src='images/samwelldead.png';
+							if(!wisedeath&&!welldeath){
+								var comment='<b>Game over! Our lovable Sams have perished.</b>'
+								mission2done=true;
+								frododone=true;
+								gameover=true;
+								pushAnnouncement(comment);
+								if(score>highestscore){
+									pushAnnouncement("<b>You have achieved a personal highscore! Play again?</b>");
+									var str="hs="+score+", expires=Thu, 28 Dec 2017 12:00:00 UTC";
+									document.cookie=str;
+									highestscore=score;
+									updateHighscore();
+								}
 							}
 						}
 					}
@@ -548,26 +661,41 @@ var update = function() {
 					hit = Collides(entities[i], 
 										{x: Input.x, y: Input.y, r: 25});
 					if(hit){
-						totalhits+=1;
-						streak+=1;
-						score+=Math.round(Math.sqrt(streak)*10);
-						if(streak>higheststreak){
-							higheststreak=streak;
-						}
-						updateStreak();
-						updateAccuracy();
-						updateScore();
-						teststreak=true;
-						entities[i].health -= 1;
-						if(entities[i].health==0){
-							entities[i].remove=true;
-							
-							for (var n = 0; n < 5; n +=1 ) {
-							entities.push(new Particle(entities[i].x, entities[i].y, 
-									2, 
-									// random opacity to spice it up a bit
-									'rgba(255,0,0,'+Math.random()*1+')'
-								)); 
+						if(entities[i].type=='whitewalker'&&entities[i].health==1&&mission2dginventory==0){
+
+						} else{
+							if(entities[i].type=='whitewalker'&&mission2dginventory>0){
+								mission2dginventory-=1;
+								entities[i].health=1;
+								updateDG();
+							} else if(entities[i].type=='dragonglass'){
+								mission2dginventory+=1;
+								updateDG();
+							} else if(entities[i].type=='whitewalker'&&entities[i].health==2){
+								entities[i].timer=100;
+								score-=Math.round(Math.sqrt(streak+1)*10);
+							}
+							totalhits+=1;
+							streak+=1;
+							score+=Math.round(Math.sqrt(streak)*10);
+							if(streak>higheststreak){
+								higheststreak=streak;
+							}
+							updateStreak();
+							updateAccuracy();
+							updateScore();
+							teststreak=true;
+							entities[i].health -= 1;
+							if(entities[i].health==0){
+								entities[i].remove=true;
+								
+								for (var n = 0; n < 5; n +=1 ) {
+								entities.push(new Particle(entities[i].x, entities[i].y, 
+										2, 
+										// random opacity to spice it up a bit
+										'rgba(255,0,0,'+Math.random()*1+')'
+									)); 
+								}
 							}
 						}
 					}
@@ -592,14 +720,16 @@ var update = function() {
 	
 	if(difficultytimer>2500){
 		difficultytimer-=2500;
-		spawnconstant-=.05;
+		spawnconstant-=.1;
 	}
 	if(frodotimer>0&&!frododone){
 		frodotimer-=1;
 	}
-
+	if(wintimer>0&&mission2done&&!mission2doneb){
+		wintimer-=1;
+	}
 	if(!frodo.dead&&frodostart&&!frododone&&frodotimer<=0){
-		frodotimer=1000;
+		frodotimer=130;
 		if(Math.random()<.7){
 			entities.push(new Enemy('ringwraithfrodo',2));
 		} else if(Math.random()<1){
@@ -614,6 +744,60 @@ var update = function() {
 		updateScore();
 	}
 
+	if(mission2wwtimer>0&&!mission2done){
+		mission2wwtimer-=1;
+	}
+	
+	if(mission2dgtimer>0&&!mission2done){
+		mission2dgtimer-=1;
+	}
+	
+	if(mission2astart&&mission2wwtimer<=0&&mission2wwcount<10&&!gameover){
+		entities.push(new Enemy('whitewalker',2));
+		mission2wwcount+=1;
+		mission2wwtimer=250;
+	}
+	
+	if(mission2bstart&&mission2dgtimer<=0&&mission2dgcount<10&&!gameover){
+		entities.push(new Enemy('dragonglass',1));
+		mission2dgcount+=1;
+		mission2dgtimer=200;
+	}
+	
+	if(mission2wwcount>=10&&!mission2done&&!gameover){
+		mission2done=true;
+		pushAnnouncement("<b>You have survived the whitewalker invasion. Now the iron throne... +3500 score.</b>");
+		score+=3500;
+		updateScore();
+	}
+	
+	if(mission2done&&!mission2doneb&&wintimer<=0&&!gameover){
+		mission2doneb=true;
+		pushAnnouncement("<b>Congratulations, you have completed both missions and have saved the world. You have been bestowed the title of: <i>SAMWIN WIGGINS.</i></b>");
+		score+=3500;
+		updateScore();
+	}
+	
+	if(timer>4500&&!mission2start&&!mission2done){
+		mission2start=true;
+		pushAnnouncement("<b>Samwell feels homesick. We travel to the lands of Westeros, to the northern wall.</b>");
+	}
+	
+	if(timer>5400&&!mission2astart&&!mission2done){
+		mission2astart=true;
+		pushAnnouncement("<b>The legends are true...Those are white walkers! They will come back to life!</b>");
+		mission2wwtimer=300;
+		entities.push(new Enemy('whitewalker',2));
+		mission2wwcount+=1;
+	}
+	
+	if(timer>6400&&!mission2bstart&&!mission2done){
+		mission2bstart=true;
+		pushAnnouncement("<b>Mission 2: Pick up the dragonglass daggers! They will kill the whitewalkers once and for all and save Westeros!</b>");
+		mission2dgtimer=200;
+		entities.push(new Enemy('dragonglass',1));
+		mission2dgcount+=1;
+	}
 	if((testenemy)&&!(teststreak)){
 		if(higheststreak<streak){
 			higheststreak=streak;
@@ -680,7 +864,11 @@ var update = function() {
 };
 
 var render = function() {
-	context.drawImage(map,0,0,canvas.width,canvas.height);
+	if(!mission2start){
+		context.drawImage(map,0,0,canvas.width,canvas.height);
+	} else {
+		context.drawImage(map2,0,0,canvas.width,canvas.height);
+	}
 	samwise.render();
 	samwell.render();
 	if(frodostart){
