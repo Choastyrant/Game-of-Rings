@@ -44,10 +44,15 @@ var android = ua.indexOf('android') > -1 ? true : false;
 var ios = ( ua.indexOf('iphone') > -1 || ua.indexOf('ipad') > -1  ) ? 
     true : false;
 var gameArea = document.getElementById('gameArea');
-	
+var spawnconstant=1;
+var difficultytimer=0;
 var timer=0;
 //boolean variables for timer related events
 var timernote=true;
+var frodostart=false;
+var frododone=false;
+var frodotimer=200;
+var frododeathtimer=0;
 
 var updateHighscore=function(){
 	var comment='<b>Your Highscore:</b> '+highestscore;
@@ -163,9 +168,12 @@ Sam.prototype.render = function() {
 	if(!this.dead){
 		context.drawImage(this.img,this.x,this.y,50*ratio,50*ratio);
 	} else {
-		if(this.type=='samwise'){
+		if(this.type=='frodo'&&frododeathtimer>0){
+			context.drawImage(frodoicondead,this.deathx,this.deathy,50*ratio,50*ratio);
+			frododeathtimer-=1;
+		} else if(this.type=='samwise'){
 			context.drawImage(samwiseicondead,this.deathx,this.deathy,50*ratio,80*ratio);
-		} else {
+		} else if(this.type=='samwell'){
 			context.drawImage(samwellicondead,this.deathx,this.deathy,50*ratio,80*ratio);
 		}
 	}
@@ -178,21 +186,22 @@ Sam.prototype.update = function() {
 	} else {
 		return;
 	}
-  
-  if(this.x - 5 < 0) { // hitting the left wall
-    this.x = 5;
-    this.x_speed = -this.x_speed;
-  } else if(this.x + 5 > 650) { // hitting the right wall
-    this.x = 645;
-    this.x_speed = -this.x_speed;
-  }
-  
-  if(this.y - 5 < 0) { // hitting the left wall
-    this.y = 5;
-    this.y_speed = -this.y_speed;
-  } else if(this.y + 5 > 450) { // hitting the right wall
-    this.y = 445;
-    this.y_speed = -this.y_speed;
+	if(this.type!='frodo'){
+		  if(this.x - 5 < 0) { // hitting the left wall
+			this.x = 5;
+			this.x_speed = -this.x_speed;
+		  } else if(this.x + 5 > 760) { // hitting the right wall
+			this.x = 755;
+			this.x_speed = -this.x_speed;
+		  }
+		  
+		  if(this.y - 5 < 0) { // hitting the left wall
+			this.y = 5;
+			this.y_speed = -this.y_speed;
+		  } else if(this.y + 5 > 530) { // hitting the right wall
+			this.y = 525;
+			this.y_speed = -this.y_speed;
+		  }
   }
 };
 var Negorpos=function(num){
@@ -205,16 +214,18 @@ var Negorpos=function(num){
 
 var samwise1=Math.floor((Math.random()*650)+1);
 var samwise2=Math.floor((Math.random()*450)+1);
-var samwisedir1=Negorpos((Math.random()*2)+2);
-var samwisedir2=Negorpos((Math.random()*2)+2);
+var samwisedir1=Negorpos((Math.random()*2)+1.5);
+var samwisedir2=Negorpos((Math.random()*2)+1.5);
 
 var samwell1=Math.floor((Math.random()*650)+1);
 var samwell2=Math.floor((Math.random()*450)+1);
-var samwelldir1=Negorpos((Math.random()*2)+1);
-var samwelldir2=Negorpos((Math.random()*2)+1);
+var samwelldir1=Negorpos((Math.random()*1.5)+1);
+var samwelldir2=Negorpos((Math.random()*1.5)+1);
 
 var samwise=new Sam(samwise1,samwise2,samwisedir1,samwisedir2,samwiseicon,'samwise');
 var samwell=new Sam(samwell1,samwell2,samwelldir1,samwelldir2,samwellicon,'samwell');
+
+var frodo=new Sam(150,100,.244,.152,frodoicon,'frodo');
 
 Input={
 	x: 0,
@@ -244,7 +255,8 @@ Touch=function(x,y){
     this.fade = 0.05;       // amount by which to fade on each game tick
     this.remove = false;    // flag for removing this entity. POP.update
                             // will take care of this
-							
+	this.spawncounter=0;
+	
 	this.update = function() {
         // reduce the opacity accordingly
         this.opacity -= this.fade; 
@@ -265,7 +277,7 @@ Enemy=function(type,health){
 	this.type = type;
 	this.health=health;
 	this.img;
-	this.spawncounter=30;
+	this.spawncounter=35;
     this.x = Math.random() * (630*ratio)+20*ratio;
     this.y = Math.random() * (470*ratio)+20*ratio;
 	this.xdir=Math.random()*4*ratio-2;
@@ -277,23 +289,48 @@ Enemy=function(type,health){
 	}
 	this.r = 15*ratio;                // the radius of the bubble
     this.remove = false;
-	
+	if(this.type=='ringwraithfrodo'){
+		this.spawncounter=60;
+		while((this.x-frodo.x)*(this.x-frodo.x)+(this.y-frodo.y)*(this.y-frodo.y)<200*ratio){
+			this.x = Math.random() * 630*ratio+20*ratio;
+			this.y = Math.random() * 470*ratio+20*ratio;
+		}
+		this.r=12*ratio;
+	}
     this.update = function() {
 		if(this.spawncounter==0){
-			if(Math.random()*1<.02){
-				this.xdir=Negorpos((Math.random()*3)*ratio);
-				this.ydir=Negorpos((Math.random()*3)*ratio);
+			if(this.type=='ringwraithfrodo'){
+				this.xdir=frodo.x-this.x;
+				this.ydir=frodo.y-this.y;
+				if(this.xdir>.8){
+					this.xdir=.8;
+				}
+				if(this.xdir<-.8){
+					this.xdir=-.8;
+				}
+				if(this.ydir>.8){
+					this.ydir=.8;
+				}
+				if(this.ydir<-.8){
+					this.ydir=-.8;
+				}
+				this.y += this.ydir;
+				this.x += this.xdir;
+			} else {
+				if(Math.random()*1<.02){
+					this.xdir=Negorpos((Math.random()*3)*ratio);
+					this.ydir=Negorpos((Math.random()*3)*ratio);
+				}
+				// move up the screen by dir
+				this.y += this.ydir;
+				this.x += this.xdir;
 			}
-			// move up the screen by dir
-			this.y -= this.ydir;
-			this.x -= this.xdir;
-
 			// if off screen, flag for removal
-			if (this.y < -10 || this.y>580) {
+			if (this.y < -10 || this.y>600) {
 				this.remove = true;
 			}
 
-			if (this.x < -10 || this.x>800) {
+			if (this.x < -10 || this.x>820) {
 				this.remove = true;
 			}
 		} else {
@@ -314,7 +351,7 @@ Enemy=function(type,health){
 			} else {
 				this.img=wildling1;
 			}
-		} else if(this.type=='ringwraith'){
+		} else if(this.type=='ringwraith'||this.type=='ringwraithfrodo'){
 			if(this.health==4){
 				this.img=ringwraith4;
 			} else if(this.health==3){
@@ -423,8 +460,12 @@ var updateScore=function(){
 
 var update = function() {
 	timer+=1;
+	difficultytimer+=1;
 	samwise.update();
 	samwell.update();
+	if(frodostart&&!frododone){
+		frodo.update();
+	}
 	if (Input.tapped) {
 		entities.push(new Touch(Input.x, Input.y));
 		// set tapped back to false
@@ -439,12 +480,13 @@ var update = function() {
 	var i;
     for (i = 0; i < entities.length; i += 1) {
         entities[i].update();
-		if (((entities[i].type === 'orc') ||
+		if ((entities[i].type === 'orc') ||
 			(entities[i].type === 'ringwraith') ||
 			(entities[i].type === 'gollum') ||
 			(entities[i].type === 'wildling') ||
-			(entities[i].type === 'mance'))&&entities[i].spawncounter==0 ) {
-				if(!samwise.dead){
+			(entities[i].type === 'mance') ||
+			(entities[i].type === 'ringwraithfrodo')) {
+				if(!samwise.dead&&entities[i].spawncounter==0){
 					samwise.dead=Collides(entities[i],{x: samwise.x, y:samwise.y, r:(15*ratio)});
 					if(samwise.dead&&wisedeath==true){
 						samwise.deathx=samwise.x;
@@ -468,7 +510,7 @@ var update = function() {
 						}
 					}
 				}
-				if(!samwell.dead){
+				if(!samwell.dead&&entities[i].spawncounter==0){
 					samwell.dead=Collides(entities[i],{x: samwell.x, y:samwell.y, r:15});
 					if(samwell.dead&&welldeath==true){
 						samwell.deathx=samwell.x;
@@ -490,6 +532,16 @@ var update = function() {
 								updateHighscore();
 							}
 						}
+					}
+				}
+				if(frodostart&&!frododone&&!frodo.dead&&entities[i].spawncounter==0){
+					frodo.dead=Collides(entities[i],{x: frodo.x, y:frodo.y, r:(10*ratio)});
+					if(!frododone&&frodo.dead){
+						frododone=true;
+						frododeathtimer=500;
+						frodo.deathx=frodo.x;
+						frodo.deathy=frodo.y;
+						pushAnnouncement("<b>Frodo has been captured! The quest has failed. Sauron has taken the ring.</b>");
 					}
 				}
 				if(testenemy){
@@ -526,13 +578,42 @@ var update = function() {
         if (entities[i].remove) {
             entities.splice(i, 1);
         }
-		
-		//timer related events
-		if(timer>100&&timernote){
-			pushAnnouncement("<b>Your first enemy has appeared! Click on their heads to kill them. Don't let them touch our beloved Sams! Be careful, some enemies are stronger than others!</b>");
-			timernote=false;
+	}	
+	//timer related events
+	if(timer>100&&timernote){
+		pushAnnouncement("<b>Your first enemy has appeared! Click on their heads to kill them. Don't let them touch our beloved Sams! Be careful, some enemies are stronger than others!</b>");
+		timernote=false;
+	}
+	
+	if(timer>1800&&!frodostart&&!frododone){
+		frodostart=true;
+		pushAnnouncement("<b>Mission 1: Frodo needs your help to bring the ring to Mordor! Unfortunately the ringwraiths are after him! Protect him!</b>");
+	}
+	
+	if(difficultytimer>2500){
+		difficultytimer-=2500;
+		spawnconstant-=.05;
+	}
+	if(frodotimer>0&&!frododone){
+		frodotimer-=1;
+	}
+
+	if(!frodo.dead&&frodostart&&!frododone&&frodotimer<=0){
+		frodotimer=1000;
+		if(Math.random()<.7){
+			entities.push(new Enemy('ringwraithfrodo',2));
+		} else if(Math.random()<1){
+			entities.push(new Enemy('ringwraithfrodo',3));
 		}
-    }
+	}
+	if(!frodo.dead&&frodo.x>675&&frodo.y>475&&!frododone){
+		frododone=true;
+		frodo.dead=true;
+		pushAnnouncement("<b>Frodo has reached Mordor and destroyed the ring! Sam is elated and so should you! +2000 score.</b>");
+		score+=2000;
+		updateScore();
+	}
+
 	if((testenemy)&&!(teststreak)){
 		if(higheststreak<streak){
 			higheststreak=streak;
@@ -545,6 +626,7 @@ var update = function() {
 	if(wisedeath || welldeath){
 		nextEnemy-=1;
 	}
+
 	if (nextEnemy < 0) {
     // put a new instance of enemy into our entities array
 		randnum=Math.random() * 6;
@@ -586,7 +668,7 @@ var update = function() {
 		}
 		entities.push(new Enemy(randenemy,hp));
     // reset the counter with a random value
-		nextEnemy = ( Math.random() * 100 ) + 60;
+		nextEnemy = (( Math.random() * 100 ) + 60)*spawnconstant;
 		if(!wisedeath){
 			nextEnemy-=30;
 		}
@@ -601,6 +683,9 @@ var render = function() {
 	context.drawImage(map,0,0,canvas.width,canvas.height);
 	samwise.render();
 	samwell.render();
+	if(frodostart){
+		frodo.render();
+	}
 	var i;
     // cycle through all entities and render to canvas
     for (i = 0; i < entities.length; i += 1) {
