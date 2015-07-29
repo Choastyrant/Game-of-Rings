@@ -6,6 +6,7 @@ body {
 	position:absolute;
 	left:50%;
 	top:50%;
+	min-height:800px;
 }
 
 #topBar{
@@ -168,6 +169,14 @@ body {
 }
 
 #inventory{
+	padding-left:5px;
+	margin-left:5px;
+	text-align:left;
+    background-color: #ffffff;
+	opacity: 0.7;
+}
+
+#difficultymarker{
 	padding-left:5px;
 	margin-left:5px;
 	text-align:left;

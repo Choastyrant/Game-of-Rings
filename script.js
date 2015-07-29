@@ -56,6 +56,8 @@ var spawnconstant=1;
 var difficultytimer=0;
 var timer=0;
 var pausegame=false;
+var difficultyconstant=1;
+var difficultyscalar=1;
 
 //boolean variables for timer related events
 var timernote=true;
@@ -75,6 +77,7 @@ var mission2dgcount=0;
 var mission2dginventory=0;
 var gameover=false;
 var wintimer=200;
+var easymode=false;
 
 var updateHighscore=function(){
 	var comment='<b>Your Highscore:</b> '+highestscore;
@@ -104,7 +107,7 @@ function pushAnnouncement(content){
 	document.getElementById('a1').innerHTML = content+"<hr>";
 }
 
-var pauseGame=function(){
+pauseGame=function(){
 	if(pausegame==false){
 		pausegame=true;
 		pushAnnouncement("<b>Game paused</br>");
@@ -115,11 +118,26 @@ var pauseGame=function(){
 	}
 }
 
+changeEasy=function(){
+	difficultyconstant=0.75;
+	difficultyscalar=1.2;
+	easymode=true;
+	pushAnnouncement("<b>Difficulty set: EASY</br>");
+}
+
+changeHard=function(){
+	difficultyconstant=1;
+	difficultyscalar=1;
+	easymode=false;
+	pushAnnouncement("<b>Difficulty set: HARD</br>");
+}
+
 window.onload = function() {
 	animate(step);
 	gameArea.style.height="720px";
 	gameArea.style.width="1200px";
 	resizeGame()
+	changeEasy();
 	highestscore = getCookie("hs");
 	if(!isNumber(highestscore)){
 		highestscore=0;
@@ -191,7 +209,7 @@ function Sam(x,y,x_speed,y_speed,img,type) {
 	this.y = y;
 	this.x_speed = x_speed;
 	this.y_speed = y_speed;
-	this.radius = 25;
+	this.radius = 25*difficultyconstant;
 	this.img=img;
 	this.deathx=0;
 	this.deathy=0;
@@ -216,8 +234,8 @@ Sam.prototype.render = function() {
 
 Sam.prototype.update = function() {
 	if(!this.dead){
-		this.x += (this.x_speed*ratio);
-		this.y += (this.y_speed*ratio);
+		this.x += (this.x_speed*ratio*difficultyconstant);
+		this.y += (this.y_speed*ratio*difficultyconstant);
 	} else {
 		return;
 	}
@@ -249,13 +267,13 @@ var Negorpos=function(num){
 
 var samwise1=Math.floor((Math.random()*650)+1);
 var samwise2=Math.floor((Math.random()*450)+1);
-var samwisedir1=Negorpos((Math.random()*2)+1.5);
-var samwisedir2=Negorpos((Math.random()*2)+1.5);
+var samwisedir1=Negorpos((Math.random()*2)+1.25);
+var samwisedir2=Negorpos((Math.random()*2)+1.25);
 
 var samwell1=Math.floor((Math.random()*650)+1);
 var samwell2=Math.floor((Math.random()*450)+1);
-var samwelldir1=Negorpos((Math.random()*1.5)+1);
-var samwelldir2=Negorpos((Math.random()*1.5)+1);
+var samwelldir1=Negorpos((Math.random()*1.5)+.75);
+var samwelldir2=Negorpos((Math.random()*1.5)+.75);
 
 var samwise=new Sam(samwise1,samwise2,samwisedir1,samwisedir2,samwiseicon,'samwise');
 var samwell=new Sam(samwell1,samwell2,samwelldir1,samwelldir2,samwellicon,'samwell');
@@ -287,7 +305,7 @@ Touch=function(x,y){
 	this.type = 'touch'; 
     this.x = x;             // the x coordinate
     this.y = y;             // the y coordinate
-    this.r = 5*ratio;             // the radius
+    this.r = 5*ratio*difficultyscalar;             // the radius
     this.opacity = 1;       // initial opacity; the dot will fade out
     this.fade = 0.05;       // amount by which to fade on each game tick
     this.remove = false;    // flag for removing this entity. update
@@ -344,7 +362,7 @@ Enemy=function(type,health){
 		}
 		if(this.type=='whitewalker'&&this.health==1&&this.timer<=0){
 			this.health=2;
-			this.spawncounter=60;
+			this.spawncounter=60*difficultyscalar;
 		}
 		if(this.spawncounter==0){
 			if(this.type=='dragonglass'){
@@ -367,8 +385,8 @@ Enemy=function(type,health){
 					if(this.ydir<-.5){
 						this.ydir=-.5;
 					}
-					this.y += this.ydir;
-					this.x += this.xdir;
+					this.y += (this.ydir)*difficultyconstant;
+					this.x += (this.xdir)*difficultyconstant;
 				} else if(!samwise.dead){
 					this.xdir=samwise.x-this.x;
 					this.ydir=samwise.y-this.y;
@@ -384,8 +402,8 @@ Enemy=function(type,health){
 					if(this.ydir<-.5){
 						this.ydir=-.5;
 					}
-					this.y += this.ydir;
-					this.x += this.xdir;
+					this.y += (this.ydir)*difficultyconstant;
+					this.x += (this.xdir)*difficultyconstant;
 				}
 			} else if(this.type=='ringwraithfrodo'){
 				this.xdir=frodo.x-this.x;
@@ -402,16 +420,16 @@ Enemy=function(type,health){
 				if(this.ydir<-.8){
 					this.ydir=-.8;
 				}
-				this.y += this.ydir;
-				this.x += this.xdir;
+				this.y += (this.ydir)*difficultyconstant;
+				this.x += (this.xdir)*difficultyconstant;
 			} else {
 				if(Math.random()*1<.02){
 					this.xdir=Negorpos((Math.random()*3)*ratio);
 					this.ydir=Negorpos((Math.random()*3)*ratio);
 				}
 				// move up the screen by dir
-				this.y += this.ydir;
-				this.x += this.xdir;
+				this.y += (this.ydir)*difficultyconstant;
+				this.x += (this.xdir)*difficultyconstant;
 			}
 			// if off screen, flag for removal
 			if (this.y < -10 || this.y>600) {
@@ -684,8 +702,8 @@ update = function() {
 								mission2dginventory+=1;
 								updateDG();
 							} else if(entities[i].type=='whitewalker'&&entities[i].health==2){
-								entities[i].timer=100;
-								score-=Math.round(Math.sqrt(streak+1)*10);
+								entities[i].timer=100*difficultyscalar;
+								score-=Math.round(Math.sqrt(streak+1)*10*difficultyconstant);
 							}
 							totalhits+=1;
 							streak+=1;
@@ -731,7 +749,7 @@ update = function() {
 	}
 	
 	if(difficultytimer>2500){
-		difficultytimer-=2500;
+		difficultytimer-=2500*difficultyscalar;
 		spawnconstant-=.1;
 	}
 	if(frodotimer>0&&!frododone){
@@ -741,7 +759,7 @@ update = function() {
 		wintimer-=1;
 	}
 	if(!frodo.dead&&frodostart&&!frododone&&frodotimer<=0){
-		frodotimer=130;
+		frodotimer=130*difficultyscalar;
 		if(Math.random()<.7){
 			entities.push(new Enemy('ringwraithfrodo',2));
 		} else if(Math.random()<1){
@@ -751,8 +769,13 @@ update = function() {
 	if(!frodo.dead&&frodo.x>675&&frodo.y>475&&!frododone){
 		frododone=true;
 		frodo.dead=true;
-		pushAnnouncement("<b>Frodo has reached Mordor and destroyed the ring! Sam is elated and so should you! +2000 score.</b>");
-		score+=2000;
+		if(!easymode){
+			pushAnnouncement("<b>Frodo has reached Mordor and destroyed the ring! Sam is elated and so should you! +2000 score.</b>");
+			score+=2000;
+		} else{
+			pushAnnouncement("<b>Frodo has reached Mordor and destroyed the ring! Sam is elated and so should you! +1000 score.</b>");
+			score+=1000;
+		}
 		updateScore();
 	}
 
@@ -767,35 +790,48 @@ update = function() {
 	if(mission2astart&&mission2wwtimer<=0&&mission2wwcount<10&&!gameover){
 		entities.push(new Enemy('whitewalker',2));
 		mission2wwcount+=1;
-		mission2wwtimer=250;
+		mission2wwtimer=250*difficultyscalar;
 	}
 	
-	if(mission2bstart&&mission2dgtimer<=0&&mission2dgcount<10&&!gameover){
+	if(mission2bstart&&mission2dgtimer<=0&&mission2dgcount<15&&!gameover){
 		entities.push(new Enemy('dragonglass',1));
 		mission2dgcount+=1;
-		mission2dgtimer=180;
+		mission2dgtimer=180*difficultyconstant;
 	}
 	
 	if(mission2wwcount>=10&&!mission2done&&!gameover){
 		mission2done=true;
-		pushAnnouncement("<b>You have survived the whitewalker invasion. Now the iron throne... +3500 score.</b>");
-		score+=3500;
+		if(!easymode){
+			pushAnnouncement("<b>You have survived the whitewalker invasion. Now the iron throne... +3500 score.</b>");
+			score+=3500;
+		} else {
+			pushAnnouncement("<b>You have survived the whitewalker invasion. Now the iron throne... +2000 score.</b>");
+			score+=2000;
+		}
 		updateScore();
 	}
 	
 	if(mission2done&&!mission2doneb&&wintimer<=0&&!gameover){
 		mission2doneb=true;
 		pushAnnouncement("<b>Congratulations, you have completed both missions and have saved the world. You have been bestowed the title of: <i>SAMWIN WIGGINS.</i></b>");
-		score+=3500;
-		updateScore();
+		if(!samwise.dead&&!samwell.dead){
+			pushAnnouncement("<b>Both Sams have survived! You are the messiah of Sams! +3000 score.</b>");
+			score+=3000;
+		} else if(!samwise.dead&&samwell.dead){
+			pushAnnouncement("<b>Samwise looks at the fallen Samwell longingly... +1000 score</b>");
+			score+=1000;
+		} else if(!samwell.dead&&samwise.dead){
+			pushAnnouncement("<b>Samwell yells at the sky angrily, shouting the name of his fallen breathen Samwise... +1000 score</b>");
+			score+=1000;
+		}
 	}
 	
-	if(timer>4500&&!mission2start&&!mission2done){
+	if(timer>5000&&!mission2start&&!mission2done){
 		mission2start=true;
 		pushAnnouncement("<b>Samwell feels homesick. We travel to the lands of Westeros, to the northern wall.</b>");
 	}
 	
-	if(timer>5400&&!mission2astart&&!mission2done){
+	if(timer>5700&&!mission2astart&&!mission2done){
 		mission2astart=true;
 		pushAnnouncement("<b>The legends are true...Those are white walkers! They will come back to life!</b>");
 		mission2wwtimer=300;
@@ -803,7 +839,7 @@ update = function() {
 		mission2wwcount+=1;
 	}
 	
-	if(timer>6400&&!mission2bstart&&!mission2done){
+	if(timer>6700&&!mission2bstart&&!mission2done){
 		mission2bstart=true;
 		pushAnnouncement("<b>Mission 2: Pick up the dragonglass daggers! They will kill the whitewalkers once and for all and save Westeros!</b>");
 		mission2dgtimer=200;
@@ -864,12 +900,12 @@ update = function() {
 		}
 		entities.push(new Enemy(randenemy,hp));
     // reset the counter with a random value
-		nextEnemy = (( Math.random() * 100 ) + 60)*spawnconstant;
+		nextEnemy = (( Math.random() * 100 ) + 60)*spawnconstant*difficultyscalar;
 		if(!wisedeath){
-			nextEnemy-=30;
+			nextEnemy-=30*difficultyconstant;
 		}
 		if(!welldeath){
-			nextEnemy-=30;
+			nextEnemy-=30*difficultyconstant;
 		}
 		randnum=(Math.random() * 5 ) +5;
 	}

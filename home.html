@@ -111,6 +111,12 @@
 				</div>
 				<input type="button" id='pausebutton' value="Pause Game" onClick="pauseGame()"></input>
 				<input type="button" id='ngbutton' value="New Game" onClick="window.location.reload()"></input>
+				<div id='difficultymarker'>
+					<b>Difficulty:</b>
+					<input type="radio" name="difficulty" value="Easy" onClick="changeEasy()" checked>Easy<br>
+					<input type="radio" name="difficulty" value="Hard" onClick="changeHard()">Hard
+				</div>
+				<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button"></div>
 			</div>
 		</div>
 	</div>
@@ -118,7 +124,7 @@
 <div id='background'>
 	<img src="images/thewall.png" class="stretch"/>
 </div>
-<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button"></div>
+
 <script type="text/javascript" src="script.js"></script>
 
 </body>
