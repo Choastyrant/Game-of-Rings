@@ -743,7 +743,7 @@ update = function() {
 		timernote=false;
 	}
 	
-	if(timer>1800&&!frodostart&&!frododone){
+	if(timer>1600&&!frodostart&&!frododone){
 		frodostart=true;
 		pushAnnouncement("<b>Mission 1: Frodo needs your help to bring the ring to Mordor! Unfortunately the ringwraiths are after him! Protect him!</b>");
 	}
@@ -793,10 +793,9 @@ update = function() {
 		mission2wwtimer=250*difficultyscalar;
 	}
 	
-	if(mission2bstart&&mission2dgtimer<=0&&mission2dgcount<15&&!gameover){
+	if(mission2bstart&&mission2dgtimer<=0&&!gameover){
 		entities.push(new Enemy('dragonglass',1));
-		mission2dgcount+=1;
-		mission2dgtimer=180*difficultyconstant;
+		mission2dgtimer=200*difficultyconstant;
 	}
 	
 	if(mission2wwcount>=10&&!mission2done&&!gameover){
@@ -826,7 +825,7 @@ update = function() {
 		}
 	}
 	
-	if(timer>5000&&!mission2start&&!mission2done){
+	if(timer>5100&&!mission2start&&!mission2done){
 		mission2start=true;
 		pushAnnouncement("<b>Samwell feels homesick. We travel to the lands of Westeros, to the northern wall.</b>");
 	}
